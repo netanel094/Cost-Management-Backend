@@ -1,6 +1,7 @@
 // Shon Khundiashvili 332326305
 // Netanel Yomtovian 207498700
 // Chen Bello 315129015
+
 const uuid = require('uuid');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
@@ -36,17 +37,17 @@ const costSchema = new mongoose.Schema({
   user_id: Number,
   day: {
     type: Number,
-    required: true,
+    required: false,
     validate: [validateDay, '1-31'],
   },
   month: {
-    type: number,
-    required: true,
+    type: Number,
+    required: false,
     validateMonth: [validateMonth, '1-12'],
   },
   year: {
-    type: number,
-    required: true,
+    type: Number,
+    required: false,
     validateMonth: [validateYear, '1-12'],
   },
   id: {
