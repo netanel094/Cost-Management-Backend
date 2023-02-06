@@ -2,16 +2,14 @@
 // Netanel Yomtovian 207498700
 // Chen Bello 315129015
 
-const uuid = require('uuid');
+const password = require('../info');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const { type } = require('os');
 mongoose.set('strictQuery', true);
 
-const connectionString =
-  'mongodb+srv://natan094:Natan112233@serverside.djqrb8k.mongodb.net/Server-Side-Project?retryWrites=true&w=majority';
-
 //Connecting to the database
-mongoose.connect(connectionString, { useNewUrlParser: true });
+mongoose.connect(password, { useNewUrlParser: true });
 
 const db = mongoose.connection;
 
@@ -51,7 +49,7 @@ const costSchema = new mongoose.Schema({
   year: {
     type: Number,
     required: false,
-    validate: [validateYear, '1-12'],
+    validate: [validateYear, '1900-2023'],
   },
   id: {
     type: String,
@@ -89,7 +87,7 @@ function validateYear(v) {
 // the 'pre' save the day, month and year to the current date if they are not specified.
 costSchema.pre('save', function (next) {
   const currentData = new Date();
-  if (!this.day) if (!this.day) this.day = currentData.getDate();
+  if (!this.day) this.day = currentData.getDate();
   if (!this.month) this.month = currentData.getMonth() + 1;
   if (!this.year) this.year = currentData.getFullYear();
   next();
