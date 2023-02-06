@@ -34,7 +34,10 @@ const userSchema = new mongoose.Schema({
 });
 
 const costSchema = new mongoose.Schema({
-  user_id: Number,
+  user_id: {
+    type: Number,
+    require: true,
+  },
   day: {
     type: Number,
     required: false,
@@ -43,12 +46,12 @@ const costSchema = new mongoose.Schema({
   month: {
     type: Number,
     required: false,
-    validateMonth: [validateMonth, '1-12'],
+    validate: [validateMonth, '1-12'],
   },
   year: {
     type: Number,
     required: false,
-    validateMonth: [validateYear, '1-12'],
+    validate: [validateYear, '1-12'],
   },
   id: {
     type: String,
@@ -80,8 +83,17 @@ function validateMonth(v) {
   return v >= 1 && v <= 12;
 }
 function validateYear(v) {
-  return v >= 190 && v <= 31;
+  return v >= 1900 && v <= 2023;
 }
+
+// the 'pre' save the day, month and year to the current date if they are not specified.
+costSchema.pre('save', function (next) {
+  const currentData = new Date();
+  if (!this.day) if (!this.day) this.day = currentData.getDate();
+  if (!this.month) this.month = currentData.getMonth() + 1;
+  if (!this.year) this.year = currentData.getFullYear();
+  next();
+});
 
 //Define use and cost models
 const User = mongoose.model(`User`, userSchema);
@@ -115,4 +127,4 @@ async function createUserIfNotExists(user) {
 
 createUserIfNotExists(user).then(console.log).catch(console.error);
 
-module.exports = { Cost };
+module.exports = { Cost, User };
