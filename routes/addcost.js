@@ -3,9 +3,9 @@
 // Chen Bello 315129015
 
 const express = require('express');
-const { Cost, User } = require('../models/database');
 let router = express.Router();
 const url = require('url');
+const { Cost, User } = require('../models/database');
 
 router.post('/', function (req, res) {
   const query = url.parse(req.url, true).query;
