@@ -33,17 +33,17 @@ try {
     day: {
       type: Number,
       required: false,
-      validate: [validateDay, '1-31'],
+      validate: [validateDay, 'Allowed session values are 1 to 31'],
     },
     month: {
       type: Number,
       required: false,
-      validate: [validateMonth, '1-12'],
+      validate: [validateMonth, 'Allowed session values are 1 to 12'],
     },
     year: {
       type: Number,
       required: false,
-      validate: [validateYear, '1900-2023'],
+      validate: [validateYear, 'Allowed session values are 1900 to 2023'],
     },
     id: {
       type: String,
