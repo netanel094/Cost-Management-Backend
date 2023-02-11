@@ -5,7 +5,6 @@
 const password = require('../info');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
-const { type } = require('os');
 mongoose.set('strictQuery', true);
 
 try {
@@ -21,8 +20,8 @@ try {
   //Creating the user schema and cost schema
   const userSchema = new mongoose.Schema({
     id: String,
-    firstName: String,
-    lastName: String,
+    first_name: String,
+    last_name: String,
     birthday: Date,
   });
 
@@ -79,24 +78,44 @@ try {
     return v >= 1900 && v <= 2023;
   }
 
-  // the 'pre' save the day, month and year to the current date if they are not specified.
-  costSchema.pre('save', function (next) {
-    const currentData = new Date();
-    if (!this.day) this.day = currentData.getDate();
-    if (!this.month) this.month = currentData.getMonth() + 1;
-    if (!this.year) this.year = currentData.getFullYear();
-    next();
+  //Creating the Report Schema
+  const reportSchema = new mongoose.Schema({
+    report: {
+      type: JSON,
+      default: {
+        food: [],
+        housing: [],
+        health: [],
+        sport: [],
+        education: [],
+        transportation: [],
+        other: [],
+      },
+    },
+    user_id: {
+      type: Number,
+      required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
+    month: {
+      type: Number,
+      required: true,
+    },
   });
 
   //Define use and cost models
+  const Report = mongoose.model('Report', reportSchema);
   const User = mongoose.model(`User`, userSchema);
   const Cost = mongoose.model(`Cost`, costSchema);
 
   // Creating a single document of a user
   var user = new User({
     id: `123123`,
-    firstName: `Moshe`,
-    lastName: `Israeli`,
+    first_name: `Moshe`,
+    last_name: `Israeli`,
     birthday: new Date(1990, 0, 11),
   });
 
@@ -105,7 +124,7 @@ try {
       // Check if user already exists
       const existingUser = await User.findOne({ id: user.id });
       if (existingUser) {
-        console.log('User already exists, not creating');
+        console.log(`The user: ${user} already exists, not creating.!`);
         return existingUser;
       }
       // Create new user
@@ -118,9 +137,9 @@ try {
     }
   }
 
-  createUserIfNotExists(user).then(console.log).catch(console.error);
-
-  module.exports = { Cost, User };
+  createUserIfNotExists(user).catch(console.error);
+  module.exports = { Cost, User, Report };
+  // cannot connect
 } catch (error) {
   console.log(error);
 }

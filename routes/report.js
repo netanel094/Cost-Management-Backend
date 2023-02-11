@@ -1,11 +1,11 @@
-// Shon Khundiashvili 332326305
-// Netanel Yomtovian 207498700
-// Chen Bello 315129015
+// Shon, Khundiashvili, 332326305,
+//Netanel, Yomtovian, 207498700,
+//Chen, Bello, 315129015
 
 const express = require('express');
-const { Cost } = require('../models/database');
+const { Cost, Report } = require('../models/database');
 const url = require('url');
-let router = express.Router();
+const router = express.Router();
 
 router.get(`/`, function (req, res) {
   const query = url.parse(req.url, true).query;
@@ -13,37 +13,48 @@ router.get(`/`, function (req, res) {
   const month = query.month;
   const user_id = query.user_id;
 
-  async function findCosts() {
-    try {
-      const costs = await Cost.find({
-        year: year,
-        month: month,
+  //After this code costs will contain the documents that match the query
+  async function findReport() {
+    const checkReport = await Report.findOne({
+      user_id: user_id,
+      year: year,
+      month: month,
+    });
+
+    if (checkReport) return res.status(200).json(checkReport.report);
+
+    const costs = await Cost.find({
+      user_id: user_id,
+      year: year,
+      month: month,
+    });
+
+    if (costs.length === 0) res.status(500).send(`There is no report!`);
+    else {
+      const newReport = new Report({
         user_id: user_id,
+        month: month,
+        year: year,
       });
-
-      const report = {
-        sport: [],
-        food: [],
-        housing: [],
-        health: [],
-        other: [],
-        transportation: [],
-        education: [],
-      };
-
       costs.forEach((cost) => {
-        const category = cost.category;
-        report[category].push(cost);
+        newReport.report[cost.category].push({
+          day: cost.day,
+          description: cost.description,
+          sum: cost.sum,
+        });
       });
 
-      console.log(report);
-      res.status(200).send(report);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send(err);
+      newReport.save(function (err, result) {
+        if (err) {
+          return res.status(500).send(err);
+        } else {
+          return res.status(200).json(result.report);
+        }
+      });
     }
   }
-  findCosts();
+
+  findReport();
 });
 
 module.exports = router;
