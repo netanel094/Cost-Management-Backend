@@ -1,15 +1,17 @@
 // Shon Khundiashvili 332326305
 // Netanel Yomtovian 207498700
 // Chen Bello 315129015
-
-const password = require('../info');
+require('dotenv').config();
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', true);
-
 try {
   //Connecting to the database
-  mongoose.connect(password, { useNewUrlParser: true });
+  const userName = process.env.USER_NAME;
+  const password = process.env.PASSWORD;
+  const url = `mongodb+srv://${userName}:${password}@serverside.djqrb8k.mongodb.net/Server-Side-Project?retryWrites=true&w=majority`;
+
+  mongoose.connect(url, { useNewUrlParser: true });
   const db = mongoose.connection;
 
   //Once the database is opened this event listener will be executed
