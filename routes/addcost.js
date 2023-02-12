@@ -21,6 +21,7 @@ router.post('/', async function (req, res) {
 
   try {
     await User.findOne({ id: user_id }).then((user) => {
+      console.log(user);
       if (!user) return res.status(500).send('User not found!');
       else {
         const cost = new Cost({
@@ -37,7 +38,7 @@ router.post('/', async function (req, res) {
       }
     });
   } catch (error) {
-    return res.status(500).send('error1');
+    return res.status(500).send(`error1: ${error}`);
   }
 
   try {

@@ -47,14 +47,14 @@ router.get(`/`, async function (req, res) {
 
       newReport.save(function (err, result) {
         if (err) {
-          return res.status(500).send(err);
+          return res.status(500).send('err2');
         } else {
           return res.status(200).json(result.report);
         }
       });
     }
   } catch (error) {
-    return res.status(500).send(error);
+    return res.status(500).send('error3');
   }
 });
 
