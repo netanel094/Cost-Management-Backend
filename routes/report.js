@@ -28,7 +28,7 @@ router.get(`/`, async function (req, res) {
     month: month,
   });
 
-  if (costs.length === 0) res.status(500).send(`There is no report!`);
+  if (costs.length === 0) res.status(500).send(`Error!`);
   else {
     const newReport = new Report({
       user_id: user_id,
