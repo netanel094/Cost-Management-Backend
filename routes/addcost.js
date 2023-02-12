@@ -19,54 +19,50 @@ router.post('/', async function (req, res) {
   const updated_month = month || currentData.getMonth() + 1;
   const updated_day = day || currentData.getDate();
 
-  try {
-    const user = await User.findOne({ id: user_id });
-    if (!user) return res.status(500).send('User not found!');
-    else {
-      const cost = new Cost({
-        user_id: user_id,
-        year: updated_year,
-        month: updated_month,
-        day: updated_day,
-        description: description,
-        category: category,
-        sum: sum,
-      });
+  await User.findOne({ id: user_id })
+    .then((user) => {
+      if (!user) return res.status(500).send('User not found!');
+      else {
+        const cost = new Cost({
+          user_id: user_id,
+          year: updated_year,
+          month: updated_month,
+          day: updated_day,
+          description: description,
+          category: category,
+          sum: sum,
+        });
 
-      cost.save();
-    }
-  } catch (error) {
-    return res.status(500).send(`error1: ${error}`);
-  }
-
-  try {
-    reportExists = await Report.findOne({
-      user_id: user_id,
-      year: updated_year,
-      month: updated_month,
+        cost.save().catch((error) => {
+          return res.status(500).send(error);
+        });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send(err);
     });
 
-    if (reportExists) {
-      reportExists.report[category].push({
-        day: parseInt(updated_day),
-        description: description,
-        sum: parseInt(sum),
-      });
-    }
-  } catch (error) {
-    return res.status(500).send(`error2: ${error}`);
-  }
-
-  await Report.updateOne(
-    {
-      user_id: user_id,
-      year: parseInt(updated_year),
-      month: parseInt(updated_month),
-    },
-    { report: reportExists.report }
-  ).catch(() => {
-    return res.status(500).send('catch in updateOne method on "add cost" file');
+  const reportExists = await Report.findOne({
+    user_id: user_id,
+    year: updated_year,
+    month: updated_month,
   });
+
+  if (reportExists) {
+    reportExists.report[category].push({
+      day: parseInt(updated_day),
+      description: description,
+      sum: sum,
+    });
+    await Report.updateOne(
+      {
+        user_id: user_id,
+        year: parseInt(updated_year),
+        month: parseInt(updated_month),
+      },
+      { report: reportExists.report }
+    );
+  }
 
   return res.status(200).send('The cost is saved!');
 });
