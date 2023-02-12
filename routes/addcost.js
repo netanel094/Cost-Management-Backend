@@ -21,7 +21,6 @@ router.post('/', async function (req, res) {
 
   try {
     const user = await User.findOne({ id: user_id });
-    console.log(user);
     if (!user) return res.status(500).send('User not found!');
     else {
       const cost = new Cost({
@@ -41,7 +40,7 @@ router.post('/', async function (req, res) {
   }
 
   try {
-    const reportExists = await Report.findOne({
+    reportExists = await Report.findOne({
       user_id: user_id,
       year: updated_year,
       month: updated_month,
@@ -53,19 +52,21 @@ router.post('/', async function (req, res) {
         description: description,
         sum: parseInt(sum),
       });
-
-      await Report.updateOne(
-        {
-          user_id: user_id,
-          year: parseInt(updated_year),
-          month: parseInt(updated_month),
-        },
-        { report: reportExists.report }
-      );
     }
   } catch (error) {
-    return res.status(500).send('catch in updateOne method on "add cost" file');
+    return res.status(500).send(`error2: ${error}`);
   }
+
+  await Report.updateOne(
+    {
+      user_id: user_id,
+      year: parseInt(updated_year),
+      month: parseInt(updated_month),
+    },
+    { report: reportExists.report }
+  ).catch(() => {
+    return res.status(500).send('catch in updateOne method on "add cost" file');
+  });
 
   return res.status(200).send('The cost is saved!');
 });
