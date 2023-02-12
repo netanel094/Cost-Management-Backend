@@ -19,8 +19,8 @@ router.post('/', async function (req, res) {
   const updated_month = month || currentData.getMonth() + 1;
   const updated_day = day || currentData.getDate();
 
-  await User.findOne({ id: user_id })
-    .then((user) => {
+  try {
+    await User.findOne({ id: user_id }).then((user) => {
       if (!user) return res.status(500).send('User not found!');
       else {
         const cost = new Cost({
@@ -37,18 +37,22 @@ router.post('/', async function (req, res) {
           return res.status(500).send(error);
         });
       }
-    })
-    .catch((err) => {
-      return res.status(500).send(err);
     });
+  } catch (error) {
+    return res.status(500).send(err);
+  }
 
-  const reportExists = await Report.findOne({
-    user_id: user_id,
-    year: updated_year,
-    month: updated_month,
-  }).catch(() => {
-    return res.status(500).send('in Report.findOne catch (addcost file)');
-  });
+  try {
+    const reportExists = await Report.findOne({
+      user_id: user_id,
+      year: updated_year,
+      month: updated_month,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .send(`in Report.findOne catch (addcost file): ${error}`);
+  }
 
   if (reportExists) {
     reportExists.report[category].push({
@@ -56,18 +60,21 @@ router.post('/', async function (req, res) {
       description: description,
       sum: parseInt(sum),
     });
-    await Report.updateOne(
-      {
-        user_id: user_id,
-        year: parseInt(updated_year),
-        month: parseInt(updated_month),
-      },
-      { report: reportExists.report }
-    ).catch(() => {
+
+    try {
+      await Report.updateOne(
+        {
+          user_id: user_id,
+          year: parseInt(updated_year),
+          month: parseInt(updated_month),
+        },
+        { report: reportExists.report }
+      );
+    } catch (error) {
       return res
         .status(500)
         .send('catch in updateOne method on "add cost" file');
-    });
+    }
   }
 
   return res.status(200).send('The cost is saved!');
