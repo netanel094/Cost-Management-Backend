@@ -46,6 +46,8 @@ router.post('/', async function (req, res) {
     user_id: user_id,
     year: updated_year,
     month: updated_month,
+  }).catch(() => {
+    return res.status(500).send('in Report.findOne catch (addcost file)');
   });
 
   if (reportExists) {
@@ -61,7 +63,11 @@ router.post('/', async function (req, res) {
         month: parseInt(updated_month),
       },
       { report: reportExists.report }
-    );
+    ).catch(() => {
+      return res
+        .status(500)
+        .send('catch in updateOne method on "add cost" file');
+    });
   }
 
   return res.status(200).send('The cost is saved!');
