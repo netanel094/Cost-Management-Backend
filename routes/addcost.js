@@ -33,13 +33,11 @@ router.post('/', async function (req, res) {
           sum: sum,
         });
 
-        cost.save().catch((error) => {
-          return res.status(500).send(error);
-        });
+        cost.save();
       }
     });
   } catch (error) {
-    return res.status(500).send(err);
+    return res.status(500).send(error);
   }
 
   try {
