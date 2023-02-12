@@ -37,7 +37,7 @@ router.post('/', async function (req, res) {
       }
     });
   } catch (error) {
-    return res.status(500).send(error);
+    return res.status(500).send('error1');
   }
 
   try {
