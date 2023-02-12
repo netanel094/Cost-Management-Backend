@@ -48,20 +48,14 @@ router.post('/', async function (req, res) {
       year: updated_year,
       month: updated_month,
     });
-  } catch (error) {
-    return res
-      .status(500)
-      .send(`in Report.findOne catch (addcost file): ${error}`);
-  }
 
-  if (reportExists) {
-    reportExists.report[category].push({
-      day: parseInt(updated_day),
-      description: description,
-      sum: parseInt(sum),
-    });
+    if (reportExists) {
+      reportExists.report[category].push({
+        day: parseInt(updated_day),
+        description: description,
+        sum: parseInt(sum),
+      });
 
-    try {
       await Report.updateOne(
         {
           user_id: user_id,
@@ -70,11 +64,9 @@ router.post('/', async function (req, res) {
         },
         { report: reportExists.report }
       );
-    } catch (error) {
-      return res
-        .status(500)
-        .send('catch in updateOne method on "add cost" file');
     }
+  } catch (error) {
+    return res.status(500).send('catch in updateOne method on "add cost" file');
   }
 
   return res.status(200).send('The cost is saved!');
