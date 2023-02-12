@@ -20,23 +20,22 @@ router.post('/', async function (req, res) {
   const updated_day = day || currentData.getDate();
 
   try {
-    await User.findOne({ id: user_id }).then((user) => {
-      console.log(user);
-      if (!user) return res.status(500).send('User not found!');
-      else {
-        const cost = new Cost({
-          user_id: user_id,
-          year: updated_year,
-          month: updated_month,
-          day: updated_day,
-          description: description,
-          category: category,
-          sum: sum,
-        });
+    const user = await User.findOne({ id: user_id });
+    console.log(user);
+    if (!user) return res.status(500).send('User not found!');
+    else {
+      const cost = new Cost({
+        user_id: user_id,
+        year: updated_year,
+        month: updated_month,
+        day: updated_day,
+        description: description,
+        category: category,
+        sum: sum,
+      });
 
-        cost.save();
-      }
-    });
+      cost.save();
+    }
   } catch (error) {
     return res.status(500).send(`error1: ${error}`);
   }
