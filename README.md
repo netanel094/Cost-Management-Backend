@@ -1,6 +1,6 @@
 # Cost-Management-Backend
 
-This is a REStful Web Services for a cost management application, built using JavaScript.
+This is a REStful Web Services for a cost management application, built using JavaScript and MongoDB.
 The web services provide functionality for daily financial tracking and analysis, enabling the creation of a user-friendly client interface.
 
 ## :hammer_and_wrench: Skills I used:
